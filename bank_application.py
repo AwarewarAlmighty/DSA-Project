@@ -133,3 +133,13 @@ class BankApplication:
     def display_all_accounts(self):
         if self.accounts_bst:
             self.accounts_bst.in_order_traversal()
+
+    def get_all_accounts(self):
+        accounts = []
+        def inorder(node):
+            if node:
+                inorder(node.left)
+                accounts.append(node.account)
+                inorder(node.right)
+        inorder(self.accounts_bst)
+        return accounts
