@@ -10,7 +10,7 @@ if 'bank' not in st.session_state:
 def main():
     st.title("Simple Bank Application")
 
-    # Sidebar for adding new accounts
+    # Sidebar for adding new accounts and customer search
     with st.sidebar:
         st.header("Create New Account")
         account_number = st.text_input("Account Number")
@@ -19,6 +19,15 @@ def main():
         if st.button("Create Account"):
             st.session_state.bank.create_account(account_number, customer_name, initial_balance)
             st.success(f"Account {account_number} created successfully!")
+
+        st.header("Customer Search")
+        search_name = st.text_input("Search Customer by Name")
+        if st.button("Search"):
+            account = st.session_state.bank.find_customer(search_name)
+            if account:
+                st.success(f"Found account for {search_name}: Account Number {account.account_number}")
+            else:
+                st.error(f"No account found for {search_name}")
 
     # Main area for displaying accounts and transactions
     st.header("Accounts Overview")
