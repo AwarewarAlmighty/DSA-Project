@@ -137,7 +137,7 @@ class BankApplication:
     def __init__(self):
         self.accounts_bst = None
         self.transaction_queue = Queue()
-        self.customer_hash = HashTable()
+        self.customers_array = []  # Array to store customer information
 
     def create_account(self, account_number, customer_name, initial_balance):
         new_account = Account(account_number, customer_name, initial_balance)
@@ -145,7 +145,7 @@ class BankApplication:
             self.accounts_bst = BSTNode(new_account)
         else:
             self.accounts_bst.insert(new_account)
-        self.customer_hash.insert(customer_name, new_account)
+        self.customers_array.append((customer_name, new_account))  # Add to customers array
 
     def find_account(self, account_number):
         if self.accounts_bst:
@@ -153,7 +153,10 @@ class BankApplication:
         return None
 
     def find_customer(self, customer_name):
-        return self.customer_hash.search(customer_name)
+        for name, account in self.customers_array:
+            if name == customer_name:
+                return account
+        return None
 
     def process_transactions(self):
         while not self.transaction_queue.is_empty():
