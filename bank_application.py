@@ -103,10 +103,41 @@ class Queue:
         if not self.is_empty():
             return self.items.pop(0)
 
+class HashTable:
+    def __init__(self, size=100):
+        self.size = size
+        self.table = [[] for _ in range(self.size)]
+
+    def _hash(self, key):
+        return hash(key) % self.size
+
+    def insert(self, key, value):
+        index = self._hash(key)
+        for item in self.table[index]:
+            if item[0] == key:
+                item[1] = value
+                return
+        self.table[index].append([key, value])
+
+    def search(self, key):
+        index = self._hash(key)
+        for item in self.table[index]:
+            if item[0] == key:
+                return item[1]
+        return None
+
+    def remove(self, key):
+        index = self._hash(key)
+        for i, item in enumerate(self.table[index]):
+            if item[0] == key:
+                del self.table[index][i]
+                return
+
 class BankApplication:
     def __init__(self):
         self.accounts_bst = None
         self.transaction_queue = Queue()
+        self.customer_hash = HashTable()
 
     def create_account(self, account_number, customer_name, initial_balance):
         new_account = Account(account_number, customer_name, initial_balance)
@@ -114,11 +145,15 @@ class BankApplication:
             self.accounts_bst = BSTNode(new_account)
         else:
             self.accounts_bst.insert(new_account)
+        self.customer_hash.insert(customer_name, new_account)
 
     def find_account(self, account_number):
         if self.accounts_bst:
             return self.accounts_bst.search(account_number)
         return None
+
+    def find_customer(self, customer_name):
+        return self.customer_hash.search(customer_name)
 
     def process_transactions(self):
         while not self.transaction_queue.is_empty():
